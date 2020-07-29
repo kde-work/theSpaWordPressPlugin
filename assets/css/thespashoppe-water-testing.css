@@ -1,0 +1,214 @@
+.water-testing {
+    margin: 2em 0 5em;
+    position: relative;
+}
+.select2-container--default .select2-selection--single {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 1px;
+    height: 36px;
+    padding: 3px 4px 0;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 5px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: #bbb transparent transparent transparent;
+}
+.water-testing__label {
+    display: block;
+    color: #888;
+    font-size: 12px;
+}
+.water-testing__title {
+    font-weight: bold;
+    margin: 0 0 8px;
+}
+.water-testing__col--100p {
+    width: 100%;
+}
+.water-testing__row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 12px 0 28px;
+}
+.water-testing__col + .water-testing__col {
+    margin-left: 30px;
+}
+.water-testing__col--or + .water-testing__col {
+    margin-left: 24px;
+}
+.water-testing__col--100p + .water-testing__col, .water-testing .water-testing__col--100p {
+    margin-left: 0;
+}
+.water-testing .water-testing__col--or {
+    color: #444;
+    margin: auto 0 5px 24px;
+}
+.select2-results__option {
+    font-size: 14px;
+    line-height: 1.4;
+    padding: 7px 6px;
+}
+.select2-dropdown {
+    border-radius: 1px;
+}
+.water-testing__h {
+}
+.select2-container {
+    min-width: 280px;
+    width: 280px !important;
+}
+.water-testing__hs {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0.6em 0 1em;
+    position: relative;
+}
+.water-testing__hs > span {
+    background: #fff;
+    position: relative;
+    z-index: 2;
+    padding: 0 9px;
+    margin-left: 16px;
+}
+.water-testing__hs::after {
+    background: -moz-linear-gradient(left,  rgba(34,34,34,1) 0%, rgba(158,158,158,0) 56%, rgba(255,255,255,0) 100%);
+    background: -webkit-linear-gradient(left,  rgba(34,34,34,1) 0%,rgba(158,158,158,0) 56%,rgba(255,255,255,0) 100%);
+    background: linear-gradient(to right,  rgba(34,34,34,1) 0%,rgba(158,158,158,0) 56%,rgba(255,255,255,0) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#222222', endColorstr='#00ffffff',GradientType=1 );
+    content: '';
+    height: 1px;
+    position: absolute;
+    left: 0;
+    top: 14px;
+    width: 100%;
+}
+.water-testing__value {
+    font-weight: bold;
+}
+.water-testing__result-product a {
+    text-decoration: underline;
+}
+.water-testing__result-box {
+    background: #b47a2822;
+    margin: 0 0 1.6em;
+    padding: 10px 24px 10px;
+}
+.wt-product {
+    border-radius: 2px;
+    box-shadow: 1px 1px 24px rgba(0,0,0,.08);
+    margin: 20px;
+    overflow: hidden;
+    width: 220px;
+}
+.wt-product__img {
+    background: transparent no-repeat center center / cover;
+    display: block;
+    height: 190px;
+    width: 220px;
+}
+.wt-product__title {
+    color: #222;
+    display: block;
+    font-size: 1em;
+    margin: 0;
+    padding: .1em 0 .4em;
+    text-align: center;
+}
+.wt-product__cost {
+    color: #656565 !important;
+    font-size: 14px;
+    margin: 0 20px 0 0;
+}
+.wt-product__meta {
+    display: flex;
+    justify-content: center;
+}
+.wt-product__count {
+    display: flex;
+    font-size: 18px;
+}
+.wt-product__count input {
+    background: transparent;
+    border: none;
+    font-size: 15px;
+    text-align: center;
+    width: 30px;
+}
+.wt-product__count-btn {
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+.wt-product__button {
+    cursor: pointer;
+    border: 3px solid #222;
+    border-radius: 2px;
+    margin: 14px 0 7px;
+    padding: 6px 8px;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+.wt-product__button:hover {
+    background: #222;
+    color: #fff;
+}
+.wt-product__cont {
+    padding: 14px;
+}
+.wt-products {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -20px;
+    width: calc(100% + 40px);
+}
+.water-testing__col--products > .water-testing__title {
+    margin-top: 36px;
+}
+.wt-product--t {
+    display: none;
+}
+.water-testing__row--result {
+    display: none;
+}
+.water-testing .water-testing__input {
+    border: 1px solid #ccc;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 8px 10px;
+    width: 280px;
+}
+.water-testing .water-testing__input:disabled {
+    background: #eeeeee;
+}
+@media screen and (max-width: 800px) {
+    .water-testing .water-testing__col {
+        margin-left: 0;
+        width: 100%;
+    }
+    .water-testing .select2-container {
+        width: 100% !important;
+    }
+    .water-testing .water-testing__col--or {
+        margin: 0;
+        padding: 17px 0 0;
+        text-align: center;
+    }
+    .water-testing__col--strip {
+        margin-bottom: 1.4rem;
+    }
+    .wt-products {
+        justify-content: center;
+    }
+}
+@media screen and (max-width: 400px) {
+    .wt-product {
+        width: 100%;
+    }
+}
