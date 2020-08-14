@@ -45,6 +45,29 @@
     color: #444;
     margin: auto 0 5px 24px;
 }
+.wt-tests__item--deactivate {
+    position: relative;
+}
+.wt-tests__item--deactivate::after {
+    content: '';
+    display: block;
+    left: 0;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    background: -moz-linear-gradient(top,  rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
+    background: -webkit-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%);
+    background: linear-gradient(to bottom,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 );
+    z-index: 3;
+}
+.wt-tests__item--deactivate .wt-tests__label {
+    color: #777;
+    cursor: default;
+    background: #fff !important;
+    font-weight: 500 !important;
+}
 .select2-results__option {
     font-size: 14px;
     line-height: 1.4;
@@ -62,7 +85,7 @@
 .water-testing__hs {
     font-size: 20px;
     font-weight: bold;
-    margin: 0.6em 0 1em;
+    margin: 0.6em 0 1.3em;
     position: relative;
 }
 .water-testing__hs > span {
@@ -87,13 +110,27 @@
 .water-testing__value {
     font-weight: bold;
 }
+.water-testing__result {
+    padding: 6px 0 5px;
+}
 .water-testing__result-product a {
     text-decoration: underline;
 }
 .water-testing__result-box {
+    align-items: center;
     background: #b47a2822;
-    margin: 0 0 1.6em;
-    padding: 10px 24px 10px;
+    display: flex;
+    margin: 1.2em 0 1.2em;
+    padding: 5px 24px 5px 11px;
+}
+.wt-result-box--t , .wt-info-box--t {
+    display: none;
+}
+.wt-info-box {
+    background: #ededf1;
+}
+.wt-result-boxes {
+    margin-bottom: 2em;
 }
 .wt-product {
     border-radius: 2px;
@@ -186,6 +223,204 @@
 }
 .water-testing .water-testing__input:disabled {
     background: #eeeeee;
+}
+.water-testing__test {
+    color: #bb9157;
+    display: inline-block;
+    font-weight: bold;
+    margin-right: 9px;
+}
+.water-testing__test::after {
+    content: ':';
+}
+.wt-tests {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 3px -20px 0;
+    width: calc(100% + 40px);
+}
+.wt-tests__item {
+    margin: 0 20px 16px 20px;
+    position: relative;
+}
+.wt-tests__title {
+    font-weight: bold;
+    margin: 0 0 6px;
+}
+.wt-tests__line [type="radio"] {
+    left: -5000px;
+    position: fixed;
+    z-index: -2;
+}
+.wt-tests__label {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    height: 31px;
+    margin: 0 0 6px 0;
+    min-width: 184px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+.wt-tests__label span {
+    background: #aaa;
+    display: inline-block;
+    height: 23px;
+    margin-right: 12px;
+    position: relative;
+    width: 54px;
+}
+.wt-tests__radio:checked + .wt-tests__label {
+    background: #eee;
+    font-weight: bold;
+}
+.wt-tests__radio:checked + .wt-tests__label span {
+}
+.water-testing__icon {
+    background-color: #000;
+    display: inline-block;
+    height: 34px;
+    margin-right: 7px;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    min-width: 34px;
+    width: 34px;
+}
+.water-testing__icon--brown {
+    background-color: #b18952;
+}
+.water-testing__icon--gray {
+    background-color: #999;
+}
+.water-testing__icon--info {
+    -webkit-mask-image: url(../img/info.svg);
+    mask-image: url(../img/info.svg);
+    mask-size: 98%;
+}
+.water-testing__icon--warning {
+    -webkit-mask-image: url(../img/caution.svg);
+    mask-image: url(../img/caution.svg);
+}
+.water-testing__icon--bell {
+    -webkit-mask-image: url(../img/bell.svg);
+    mask-image: url(../img/bell.svg);
+}
+.water-testing__icon--print {
+    -webkit-mask-image: url(../img/print.svg);
+    mask-image: url(../img/print.svg);
+}
+.water-testing__icon--mail {
+    -webkit-mask-image: url(../img/mail.svg);
+    mask-image: url(../img/mail.svg);
+}
+.water-testing__icon--talk {
+    -webkit-mask-image: url(../img/talk.svg);
+    mask-image: url(../img/talk.svg);
+}
+.wt-info-box__title {
+    font-size: 105%;
+    font-weight: 600;
+    margin: 6px 0 6px;
+}
+.wt-info-box__prefix {
+    font-size: 60%;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+.wt-info-box__result-product {
+    margin: 0 0 8px;
+}
+.wt-info-box__text p {
+    margin: 0;
+    padding: 0;
+}
+.wt-info-box__text ul {
+    margin-bottom: 0;
+    padding: 3px 17px 5px !important;
+}
+.wt-info-box__text {
+    font-weight: 400;
+    margin-bottom: 6px;
+}
+.wt-info-box__products a {
+    display: inline-block;
+    padding: 0 0 0 4px;
+}
+.water-testing__warning {
+    align-items: center;
+    background: #F8F7F7;
+    border: 1px solid #B8B0AD;
+    border-radius: 4px;
+    color: #413e3d;
+    display: flex;
+    font-weight: 300;
+    line-height: 1.5;
+    margin: 0.55em 0 1.1em;
+    padding: 7px 8px;
+}
+.water-testing__warning .water-testing__icon {
+    background-color: #423e3d;
+}
+.wt-button {
+    align-items: center;
+    border: 3px solid #bb9157;
+    border-radius: 2px;
+    color: #bb9157;
+    cursor: pointer;
+    display: inline-flex;
+    font-weight: bold;
+    line-height: 1.2;
+    margin: 14px;
+    min-height: 50px;
+    text-align: center;
+    transition: all 0.1s ease-in-out;
+    padding: 7px 34px 6px 32px;
+    position: relative;
+    justify-content: center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+.wt-button--shadow {
+    box-shadow: -6px -6px 10px rgba(255, 255, 255, 0.8), 5px 6px 10px rgba(0, 0, 0, 0.10);
+}
+.wt-button:hover {
+    opacity: 0.88;
+    box-shadow: -6px -6px 10px rgba(255, 255, 255, 0.8), 6px 6px 10px rgba(0, 0, 0, 0.2);
+}
+.wt-button:active {
+    opacity: 0.7;
+}
+.wt-result-actions {
+    display: flex;
+    left: -14px;
+    position: relative;
+    top: -4px;
+}
+.wt-help {
+    background: #F8F7F7;
+    border: 1px solid #B8B0AD;
+    border-radius: 4px;
+    color: #413e3d;
+    display: inline-block;
+    font-weight: 300;
+    line-height: 1.5;
+    margin: 0.55em 0 2em;
+    padding: 7px 14px;
+}
+.wt-help__title {
+    font-size: 105%;
+    font-weight: 600;
+    padding: 7px 14px 0;
+}
+.wt-help__text {
+    padding: 3px 14px 0;
+}
+.wt-help__button {
+    margin-top: 10px;
 }
 @media screen and (max-width: 800px) {
     .water-testing .water-testing__col {

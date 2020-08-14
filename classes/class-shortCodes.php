@@ -3,7 +3,7 @@
  * Shortcodes Class.
  *
  * @package THESPA_waterTesting\Classes
- * @version 1.0.3
+ * @version 1.0.5
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -30,7 +30,7 @@ class THESPA_shortcodes {
 		$products = $obj_data->get_list_of( 'products' );
 
 		ob_start();
-//		echo "<div style='white-space: pre;'>"; print_r($products); echo "</div>";
+//		echo "<div style='white-space: pre;'>"; print_r($data); echo "</div>"; die;
 		?>
 		<div class="water-testing">
             <form class="water-testing__form">
@@ -80,38 +80,114 @@ class THESPA_shortcodes {
                 </div>
                 <div class="water-testing__row">
                     <div class="water-testing__col water-testing__col--100p">
-                        <div class="water-testing__title">4. Test name</div>
+                        <div class="water-testing__title">4. Tests</div>
                     </div>
-                    <div class="water-testing__col">
+                    <div class="water-testing__col water-testing__col--100p">
+                        <div class="water-testing__warning"><div class="water-testing__icon water-testing__icon--warning"></div><div class="water-testing__warning-text">Attention! Colors on your screen may differ from the reference colors. We recommend using colors from the respective test packs.</div></div>
+                    </div>
+                    <div class="water-testing__col water-testing__col--100p">
+                        <div class="wt-tests">
+                            <div class="wt-tests__item wt-tests__item--ph wt-tests__item--deactivate">
+                                <div class="wt-tests__title">pH scale</div>
+                                <div class="wt-tests__body">
+                                    <div class="wt-tests__line wt-tests__line--res-1">
+                                        <input type="radio" name="wt-tests--TEST-NAME" id="wt-tests--res-1" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--res-1" class="wt-tests__label"><span style="background:#D70825;"></span>>8.4</label>
+                                    </div>
+                                    <div class="wt-tests__line wt-tests__line--res-2">
+                                        <input type="radio" name="wt-tests--TEST-NAME" id="wt-tests--res-2" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--res-2" class="wt-tests__label"><span style="background: #d7282d;"></span>8.0-8.4</label>
+                                    </div>
+                                    <div class="wt-tests__line wt-tests__line--res-3">
+                                        <input type="radio" name="wt-tests--TEST-NAME" id="wt-tests--res-3" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--res-3" class="wt-tests__label"><span style="background: #d84930;"></span>7.8-8.0</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php /*
+                            <div class="wt-tests__item wt-tests__item--ph">
+                                <div class="wt-tests__title">pH scale</div>
+                                <div class="wt-tests__body">
+                                    <div class="wt-tests__line wt-tests__line--res-1">
+                                        <input type="radio" name="wt-tests--TEST-NAME" id="wt-tests--res-1" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--res-1" class="wt-tests__label"><span></span>>8.4</label>
+                                    </div>
+                                    <div class="wt-tests__line wt-tests__line--res-2">
+                                        <input type="radio" name="wt-tests--TEST-NAME" id="wt-tests--res-2" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--res-2" class="wt-tests__label"><span></span>8.0-8.4</label>
+                                    </div>
+                                    <div class="wt-tests__line wt-tests__line--res-3">
+                                        <input type="radio" name="wt-tests--TEST-NAME" id="wt-tests--res-3" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--res-3" class="wt-tests__label"><span></span>7.8-8.0</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="wt-tests__item wt-tests__item--a">
+                                <div class="wt-tests__title">Alkalinity scale</div>
+                                <div class="wt-tests__body">
+                                    <div class="wt-tests__line wt-tests__line--res-4">
+                                        <input type="radio" name="wt-tests--TEST-NAME-a" id="wt-tests--res-4" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--res-4" class="wt-tests__label"><span></span>0 ppm</label>
+                                    </div>
+                                    <div class="wt-tests__line wt-tests__line--res-5">
+                                        <input type="radio" name="wt-tests--TEST-NAME-a" id="wt-tests--res-5" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--res-5" class="wt-tests__label"><span></span>20 – 40 ppm</label>
+                                    </div>
+                                    <div class="wt-tests__line wt-tests__line--res-6">
+                                        <input type="radio" name="wt-tests--TEST-NAME-a" id="wt-tests--res-6" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--res-6" class="wt-tests__label"><span></span>40 – 80 ppm</label>
+                                    </div>
+                                </div>
+                            </div>
+                            */ ?>
+                        </div>
+                    </div>
+                    <div class="water-testing__col" style="display:none;">
                         <label for="water-testing--test" class="water-testing__label">Name of your test</label>
                         <select name="test" id="water-testing--test" disabled class="water-testing__select water-testing__select--test" title="Name of your test" autocomplete="off">
-                        </select>
-                    </div>
-                </div>
-                <div class="water-testing__row">
-                    <div class="water-testing__col water-testing__col--100p">
-                        <div class="water-testing__title">5. Where test strip reading</div>
-                    </div>
-                    <div class="water-testing__col water-testing__col--strip">
-                        <label for="water-testing--strip" class="water-testing__label">Type of test</label>
-                        <select name="strip" id="water-testing--strip" disabled class="water-testing__select water-testing__select--strip" title="Type of test" autocomplete="off">
-                        </select>
-                    </div>
-                    <div class="water-testing__col water-testing__col--value">
-                        <label for="water-testing--strip" class="water-testing__label">Value of test</label>
-                        <select name="value" id="water-testing--value" disabled class="water-testing__select water-testing__select--value" title="Value of test" autocomplete="off">
                         </select>
                     </div>
                 </div>
             </form>
             <div class="water-testing__row water-testing__row--result">
                 <div class="water-testing__col water-testing__col--100p">
-                    <div class="water-testing__hs"><span>Result</span></div>
+                    <div class="water-testing__hs"><span>Results</span></div>
                 </div>
-                <div class="water-testing__col">
-                    <div class="water-testing__result-box">
-                        <div class="water-testing__result water-testing__result--regular"><span class="water-testing__prefix">You need add </span><span class="water-testing__value">%VALUE%</span><span class="water-testing__postfix"> of </span><span class="water-testing__result-product">%PRODUCT%</span><span class="water-testing__dot">.</span></div>
-                        <div class="water-testing__result water-testing__result--text"></div>
+                <div class="water-testing__col wt-result-boxes">
+                    <div class="water-testing__title">Test result</div>
+                    <div class="water-testing__result-box wt-result-box wt-result-box--t">
+                        <div class="water-testing__icon water-testing__icon--bell water-testing__icon--brown"></div>
+                        <div class="water-testing__result water-testing__result--regular"><span class="water-testing__test">%TEST%</span> <span class="water-testing__prefix">You need add </span><span class="water-testing__value">%VALUE%</span><span class="water-testing__postfix"> of </span><span class="water-testing__result-product">%PRODUCT%</span><span class="water-testing__dot">.</span></div>
+                        <div class="water-testing__result water-testing__result--text"><span class="water-testing__test">%TEST%</span> <span class="water-testing__cont"></span></div>
+                    </div>
+                </div>
+                <div class="water-testing__col water-testing__col--100p water-testing__col--actions">
+                    <div class="water-testing__title">Actions</div>
+                    <div class="wt-result-actions">
+                        <div class="wt-result-action wt-button wt-result-action--print">
+                            <div class="water-testing__icon water-testing__icon--print water-testing__icon--brown"></div>
+                            <div class="wt-result-action__text">Print</div>
+                        </div>
+                        <div class="wt-result-action wt-button wt-result-action--to-email">
+                            <div class="water-testing__icon water-testing__icon--mail water-testing__icon--brown"></div>
+                            <div class="wt-result-action__text">Send me to email</div>
+                        </div>
+                    </div>
+                    <div class="wt-help">
+                        <div class="wt-help__title">Do you need help with test results?</div>
+                        <div class="wt-help__text">We can help you.</div>
+                        <div class="wt-help__button wt-button wt-button--shadow"><div class="water-testing__icon water-testing__icon--talk water-testing__icon--brown"></div>Get help</div>
+                    </div>
+                </div>
+                <div class="water-testing__col water-testing__col--100p wt-info-boxes water-testing__col--info">
+                    <div class="water-testing__title">This is useful</div>
+                    <div class="water-testing__result-box wt-info-box wt-info-box--t">
+                        <div class="water-testing__icon water-testing__icon--info"></div>
+                        <div class="water-testing__result">
+                            <div class="wt-info-box__title"></div>
+                            <div class="wt-info-box__text"></div>
+                            <div class="wt-info-box__result-product"><span class="wt-info-box__prefix">Products: </span><span class="wt-info-box__products"></span>.</div>
+                        </div>
                     </div>
                 </div>
                 <div class="water-testing__col water-testing__col--100p water-testing__col--products">

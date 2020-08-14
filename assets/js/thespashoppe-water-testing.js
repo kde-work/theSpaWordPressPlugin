@@ -8,10 +8,14 @@
      * Form water testing.
      */
     function TheSpaShopPE() {
+        this.template = new SpaTemplate();
         this.data_form = TheSpaShopPE.prototype.initial_data($('#water-testing-data'));
         this.products = TheSpaShopPE.prototype.initial_data($('#water-testing-products'));
+        this.current_products = [];
+        this.current_extra_products = [];
+        this.filter = [];
         this.devises = TheSpaShopPE.prototype.initial_data($('#water-testing-devises'));
-        this.data_map = {'type':null, 'volume':null, 'chemical':null, 'test':null, 'strip':null, 'value':null};
+        this.data_map = {'type':null, 'volume':null, 'chemical':null, 'test':{}};
         this.$body = $('body');
 
         console.log(this.data_form, this.products); // TODO REMOVE THIS
@@ -68,6 +72,12 @@
             _this.change_item($this, this_name);
         });
 
+        this.$body.on('change', '.wt-tests__radio', function (e) {
+            let $this = $(this),
+                this_name = $this.data('name');
+            _this.change_item($this, this_name);
+        });
+
         this.$body.on('keydown', '.water-testing__input--validate-number', {obj: _this}, TheSpaShopPE.prototype.validate_number);
     };
 
@@ -81,6 +91,7 @@
     TheSpaShopPE.prototype.change_item = function($elem, select_type) {
         if (select_type !== 'value') {
             this.hide_result_box();
+            this.remove_result_boxes();
         }
         switch (select_type) {
             case 'devises' :
@@ -97,7 +108,8 @@
                 break;
             case 'type' :
                 this.data_map.type = $elem.val();
-                this.data_map.volume = this.data_map.chemical = this.data_map.test = this.data_map.strip = this.data_map.value = null;
+                this.data_map.volume = this.data_map.chemical = null;
+                this.data_map.test = {};
                 if (this.data_map.type !== null) {
                     this.change_input('volume', null, false);
                 } else {
@@ -107,33 +119,44 @@
             case 'volume' :
                 if (this.data_map.volume !== null && this.data_map.volume !== '' && this.data_map.value && $elem.val() !== '') {
                     this.data_map.volume = $elem.val();
-                    this.show_result();
+                    this.show_results();
                 } else {
                     this.data_map.volume = $elem.val();
-                    this.data_map.chemical = this.data_map.test = this.data_map.strip = this.data_map.value = null;
+                    this.data_map.chemical = null;
+                    this.data_map.test = {};
                     this.create_select('chemical', this.data_map.volume);
                 }
                 break;
             case 'chemical' :
                 this.data_map.chemical = $elem.val();
-                this.data_map.test = this.data_map.strip = this.data_map.value = null;
-                this.create_select('test', this.data_map.chemical);
+                this.data_map.test = {};
+                this.create_radio('test', this.data_map.chemical);
                 break;
             case 'test' :
-                this.data_map.test = $elem.val();
-                this.data_map.strip = this.data_map.value = null;
-                this.create_select('strip', this.data_map.test);
-                break;
-            case 'strip' :
-                this.data_map.strip = $elem.val();
-                this.data_map.value = null;
-                this.create_select('value', this.data_map.strip);
+                // this.data_map.test = $elem.val();
+                // this.data_map.strip = this.data_map.value = null;
+                // this.create_select('strip', this.data_map.test);
                 break;
             case 'value' :
-                this.data_map.value = $elem.val();
-                this.show_result();
+                this.data_map.test[$elem.data('parent')] = $elem.val();
+                this.show_results();
                 break;
         }
+    };
+
+    /**
+     * Add new result.
+     *
+     * @return $
+     */
+    TheSpaShopPE.prototype.add_result_box = function(id, block_class, box_class) {
+        let $box = $('.' + block_class);
+        let $result_template = $('.' + box_class + '--t');
+
+        $box.append($result_template.clone());
+        $result_template.first().removeClass(box_class + '--t').addClass(box_class + '--' + id);
+
+        return $('.' + box_class + '--' + id);
     };
 
     /**
@@ -155,29 +178,83 @@
     };
 
     /**
+     * Remove results.
+     *
+     * @return void
+     */
+    TheSpaShopPE.prototype.remove_result_boxes = function() {
+        this.current_products = [];
+        this.current_extra_products = [];
+        $('.wt-result-box:not(.wt-result-box--t),.wt-info-box:not(.wt-info-box--t)').remove();
+    };
+
+    /**
      * Show result.
      *
      * @return void
      */
-    TheSpaShopPE.prototype.show_result = function() {
-        if (this.data_map.value === null) {
-            if (this.data_map.strip === null) {
-                $('.water-testing__select[name="value"]').prop("disabled", true);
-            }
+    TheSpaShopPE.prototype.show_results = function() {
+        this.remove_result_boxes();
+        if (Object.keys(this.data_map.test).length === 0) {
             this.hide_result_box();
         } else {
-            let arr = this.get_array('value');
+            let arr;
 
             this.show_result_box();
+            for (let key in this.data_map.test) {
+                if (this.data_map.test.hasOwnProperty(key)) {
+                    // console.log(key, this.data_map.test[key]);
+                    arr = this.get_array('result', {'p' : key, 'c': this.data_map.test[key]});
+                    // console.log('arr', arr);
 
-            // set up data array
-            for (let i = 0; i < arr.length; i++) {
-                if (arr[i].id*1 === this.data_map.value*1) {
-                    arr = arr[i];
-                    break;
+                    for (let i = 0; i < arr.length; i++) {
+                        let $result_box = this.add_result_box(this.data_map.test[key] + '-' + arr[i].id, 'wt-result-boxes', 'wt-result-box');
+
+                        this.fill_result(arr[i], $result_box, key);
+                    }
                 }
             }
-            this.change_result(arr);
+
+            // Show products in the Related section
+            this.show_related(this.current_products, this.current_extra_products);
+
+            // Show 'This is useful'
+            this.show_useful();
+        }
+    };
+
+    /**
+     * Show 'This is useful'.
+     *
+     * @return void
+     */
+    TheSpaShopPE.prototype.show_useful = function() {
+        let arr = this.get_list_by_id(this.data_map.type, this.data_form, true);
+
+        for (let i = 0; i < arr.global_result.length; i++) {
+            // Filter to Bromine and Chlorine
+            if (this.data_map.chemical*1 === 1 && arr.global_result[i].is_b*1 === 0) {
+                continue;
+            }
+            if (this.data_map.chemical*1 === 2 && arr.global_result[i].is_c*1 === 0) {
+                continue;
+            }
+
+            let $result_box = this.add_result_box(this.data_map.volume + '-' + arr.global_result[i].id, 'wt-info-boxes', 'wt-info-box');
+            let $title = $('.wt-info-box__title', $result_box);
+            let $text = $('.wt-info-box__text', $result_box);
+            let products = this.get_products(arr.global_result[i].products);
+            let products__html = '';
+            let $result_product = $('.wt-info-box__products', $result_box);
+
+            $title.html(arr.global_result[i].name);
+            $text.html(this.filter_text(arr.global_result[i].text));
+
+            // Show product links
+            for (let i = 0; i < products.length; i++) {
+                products__html += "<a href='"+ products[i].url +"' target='blank'>"+ this.filter_text(products[i].name) +"</a>, ";
+            }
+            $result_product.html(products__html.substr(0, products__html.length - 2));
         }
     };
 
@@ -185,12 +262,13 @@
      * Change result block.
      *
      * @param  data
+     * @param  $results
+     * @param  test_id
      * @return void
      */
-    TheSpaShopPE.prototype.change_result = function(data) {
-        let $results = $('.water-testing__result-box');
-        let $result_regular = $('.water-testing__result--regular');
-        let $result_text = $('.water-testing__result--text');
+    TheSpaShopPE.prototype.fill_result = function(data, $results, test_id) {
+        let $result_regular = $('.water-testing__result--regular', $results);
+        let $result_text = $('.water-testing__result--text', $results);
         let products;
         let extra_products;
 
@@ -199,29 +277,98 @@
         $result_text.hide();
 
         products = this.get_products(data.products);
-        extra_products = this.get_products(data.extra_products);
+        if (this.data_map.chemical*1 === 1) {
+            extra_products = this.get_products(data.extra_products_b);
+        } else {
+            extra_products = this.get_products(data.extra_products_c);
+        }
 
         // If result is 'text' - independent output.
         if (data.type === 'text') {
-            $result_text.html(data.result).show();
+            $result_text.show();
+            $result_text.find('.water-testing__cont').html(this.filter_text(data.add_text) + '.');
+            $result_text.find('.water-testing__test').html(this.test_name_by_id(test_id));
         } else {
             let $value = $('.water-testing__value', $result_regular);
             let $product = $('.water-testing__result-product', $result_regular);
+            let $test = $('.water-testing__test', $result_regular);
             let products__html = '';
+
+            this.filter = [];
+            this.filter['volume'] = Math.floor(this.data_map.volume * data.per_liter);
 
             // Show result in the box
             $result_regular.show();
-            $value.html(Math.floor(this.data_map.volume * data.per_liter) + ' ' + data.add_text);
+            if (data.type === 'text_value') {
+                $('.water-testing__prefix', $result_regular).hide();
+                $value.html(this.filter_text(data.add_text)).css({'font-weight': '500'});
+            } else {
+                $value.html(this.filter['volume'] + ' ' + this.filter_text(data.add_text));
+            }
+
+            // Show Test name
+            $test.html(this.test_name_by_id(test_id));
 
             // Show product links in the result box
             for (let i = 0; i < products.length; i++) {
-                products__html += "<a href='"+ products[i].url +"' target='blank'>"+ products[i].name +"</a>, ";
+                products__html += "<a href='"+ products[i].url +"' target='blank'>"+ this.filter_text(products[i].name) +"</a>, ";
             }
             $product.html(products__html.substr(0, products__html.length - 2));
         }
 
-        // Show products in the Related section
-        this.show_related(products, extra_products);
+        // Push products in the global arrays
+        this.current_products = this.push_products(products, this.current_products);
+        this.current_extra_products = this.push_products(extra_products, this.current_extra_products);
+    };
+
+    /**
+     * Push unique products in the array.
+     *
+     * @param  text
+     * @return string
+     */
+    TheSpaShopPE.prototype.filter_text = function(text) {
+        switch (true) {
+            case (text.indexOf('%VALUE%') !== -1) :
+                return text.replace('%VALUE%', this.filter['volume']);
+            default:
+                return text;
+        }
+    };
+
+    /**
+     * Return test name by id.
+     *
+     * @param  id
+     * @return string
+     */
+    TheSpaShopPE.prototype.test_name_by_id = function(id) {
+        let arr = this.get_array('test', {'p' : id});
+        arr = this.get_list_by_id(id, arr, true);
+        return arr.name;
+    };
+
+    /**
+     * Push unique products in the array.
+     *
+     * @param  products
+     * @param  arr
+     * @return array
+     */
+    TheSpaShopPE.prototype.push_products = function(products, arr) {
+        for (let i = 0; i < products.length; i++) {
+            let is_find = false;
+            for (let j = 0; j < arr.length; j++) {
+                if (products[i] === arr[j]) {
+                    is_find = true;
+                    break;
+                }
+            }
+            if (!is_find) {
+                arr.unshift(products[i]);
+            }
+        }
+        return arr;
     };
 
     /**
@@ -279,6 +426,29 @@
     };
 
     /**
+     * Create radio.
+     *
+     * @param  type
+     * @param  val
+     * @return void
+     */
+    TheSpaShopPE.prototype.create_radio = function(type, val) {
+        let $box = $('.wt-tests');
+        let list_par = [];
+
+        $box.empty();
+        if (val !== null && val !== '') {
+            list_par = this.get_array(type);
+            // console.log('list_par', list_par);
+            for (let i = 0; i < list_par.length; i++) {
+                let list_child = this.get_array('value', {'p' : list_par[i].id});
+                // console.log('list_child', list_child);
+                this.template.print_test_item(list_par[i], list_child, this.data_map.chemical);
+            }
+        }
+    };
+
+    /**
      * Create select box.
      *
      * @param  type
@@ -318,21 +488,22 @@
      * Get data array by type and value.
      *
      * @param  type
+     * @param  id
      * @return array
      */
-    TheSpaShopPE.prototype.get_array = function(type) {
+    TheSpaShopPE.prototype.get_array = function(type, id) {
         let arr = this.get_list_by_id(this.data_map.type, this.data_form);
         if ('chemical' !== type) {
-            console.log('!== type', this.data_map.chemical, arr);
+            // console.log('!== type', this.data_map.chemical, arr);
             arr = this.get_list_by_id(this.data_map.chemical, arr);
             if ('test' !== type) {
-                arr = this.get_list_by_id(this.data_map.test, arr);
-                if ('strip' !== type) {
-                    arr = this.get_list_by_id(this.data_map.strip, arr);
+                arr = this.get_list_by_id(id.p, arr);
+                if ('value' !== type) {
+                    arr = this.get_list_by_id(id.c, arr);
                 }
             }
         }
-        console.log('type', arr, this.data_map);
+        // console.log('type', arr, this.data_map);
         return arr;
     };
 

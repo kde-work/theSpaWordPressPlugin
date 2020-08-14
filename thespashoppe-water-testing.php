@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Online water testing
  * Description: Form and personal cabinet
- * Version: 1.0.3
+ * Version: 1.0.5
  * Author: Dmitry K.
  * Author URI: kutalo.com
  * Text Domain: thespashoppe

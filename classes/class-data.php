@@ -3,7 +3,7 @@
  * THESPA_data Class.
  *
  * @package THESPA_data\Classes
- * @version 1.0.3
+ * @version 1.0.5
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -52,39 +52,65 @@ class THESPA_data {
 		$this->setup_products();
 
 		// get 'devices'
-		$this->devices = $wpdb->get_results( "SELECT * FROM `{$wpdb->prefix}thespa_devices` as devices", ARRAY_A );
+		$this->devices = $wpdb->get_results( "SELECT * FROM `{$wpdb->prefix}spa_devices` as devices", ARRAY_A );
 
 		// get 'volume'
-		$this->data = $wpdb->get_results( "SELECT * FROM `{$wpdb->prefix}thespa_volume` as volume", ARRAY_A );
+		$this->data = $wpdb->get_results( "SELECT * FROM `{$wpdb->prefix}spa_volume` as volume", ARRAY_A );
 
 		for ( $i = 0; $i < count( $this->data ); $i++ ) {
 			// get 'chemical'
 			$this->data[$i]['data'] = $wpdb->get_results(
 				$wpdb->prepare( "
-					SELECT * FROM `{$wpdb->prefix}thespa_chemical` as chemical
-					WHERE chemical.`id_volume` = '%d'
+					SELECT chemical.* FROM `{$wpdb->prefix}spa_chemical` as chemical
+					LEFT JOIN `{$wpdb->prefix}spa_volume_chemical` as relationtips
+					ON chemical.`id` = relationtips.`id_chemical`
+					WHERE relationtips.`id_volume` = '%d'
+				", $this->data[$i]['id'] ), ARRAY_A );
+
+			// get 'global_result'
+			$this->data[$i]['global_result'] = $wpdb->get_results(
+				$wpdb->prepare( "
+					SELECT global_result.* FROM `{$wpdb->prefix}spa_global_result` as global_result
+					LEFT JOIN `{$wpdb->prefix}spa_volume_global_result` as relationtips
+					ON global_result.`id` = relationtips.`id_global_result`
+					WHERE relationtips.`id_volume` = '%d'
 				", $this->data[$i]['id'] ), ARRAY_A );
 
 			for ( $j = 0; $j < count( $this->data[$i]['data'] ); $j++ ) {
-				// get 'strip'
+				// get 'test'
 				$this->data[$i]['data'][$j]['data'] = $wpdb->get_results(
 					$wpdb->prepare( "
-					SELECT * FROM `{$wpdb->prefix}thespa_strip` as strip
-					WHERE strip.`id_chemical` = '%d'
-				", $this->data[$i]['data'][$j]['id'] ), ARRAY_A );
+						SELECT test.* FROM `{$wpdb->prefix}spa_test` as test
+						LEFT JOIN `{$wpdb->prefix}spa_chemical_test` as relationtips
+						ON test.`id` = relationtips.`id_test`
+						WHERE relationtips.`id_chemical` = '%d'
+					", $this->data[$i]['data'][$j]['id'] ), ARRAY_A );
 
 				for ( $k = 0; $k < count( $this->data[$i]['data'][$j]['data'] ); $k++ ) {
-					// get 'data'
+					// get 'value'
 					$this->data[$i]['data'][$j]['data'][$k]['data'] = $wpdb->get_results(
 						$wpdb->prepare( "
-					SELECT * FROM `{$wpdb->prefix}thespa_data` as thespa_data
-					WHERE thespa_data.`id_strip` = '%d'
-				", $this->data[$i]['data'][$j]['data'][$k]['id'] ), ARRAY_A );
+							SELECT spa_value.* FROM `{$wpdb->prefix}spa_value` as spa_value
+							LEFT JOIN `{$wpdb->prefix}spa_test_value` as relationtips
+							ON spa_value.`id` = relationtips.`id_value`
+							WHERE relationtips.`id_test` = '%d'
+						", $this->data[$i]['data'][$j]['data'][$k]['id'] ), ARRAY_A );
+
+					for ( $l = 0; $l < count( $this->data[$i]['data'][$j]['data'][$k]['data'] ); $l++ ) {
+						// get 'result'
+						$this->data[$i]['data'][$j]['data'][$k]['data'][$l]['data'] = $wpdb->get_results(
+							$wpdb->prepare( "
+								SELECT result.* FROM `{$wpdb->prefix}spa_result` as result
+								LEFT JOIN `{$wpdb->prefix}spa_value_result` as relationtips
+								ON result.`id` = relationtips.`id_result`
+								WHERE relationtips.`id_value` = '%d'
+							", $this->data[$i]['data'][$j]['data'][$k]['data'][$l]['id'] ), ARRAY_A );
+					}
 				}
 			}
 		}
 
-		$this->add_test_type_level();
+//		$this->add_test_type_level();
 	}
 
 	/**
