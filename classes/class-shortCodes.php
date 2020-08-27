@@ -3,7 +3,7 @@
  * Shortcodes Class.
  *
  * @package THESPA_waterTesting\Classes
- * @version 1.0.7
+ * @version 1.0.8
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -199,10 +199,15 @@ class THESPA_shortcodes {
                                         <div class="wt-product__count-btn wt-product__count-btn--plus" data-count="1">+</div>
                                     </div>
                                 </div>
-                                <div class="wt-product__button" data-id="">Add to cart</div>
+                                <div class="wt-product__button" data-id="">
+                                    <div class="wt-product__button-text wt-product__button-text--default">Add to cart</div>
+                                    <div class="wt-product__button-text wt-product__button-text--loading"></div>
+                                    <a href="/cart/" target="_blank" class="wt-product__button-text wt-product__button-text--to-cart">Go to Cart →</a>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="wt-loading-init"></div>
                 </div>
             </div>
         </div>
@@ -217,7 +222,7 @@ class THESPA_shortcodes {
 	/**
 	 * Show saves html.
 	 *
-	 * @param  object|bool $obj_data
+	 * @param  THESPA_data|bool $obj_data
 	 * @return string
 	 */
 	public static function getSaves( $obj_data = false ) {
@@ -237,9 +242,10 @@ class THESPA_shortcodes {
             <div class="wt-previous__items">
                 <?php foreach ( $saves as $save ) {
                     $js_data = json_decode( $save['data'] );
+                    $name = self::getName( $obj_data, $js_data );
                     ?>
                     <div class="wt-previous__item wt-previous--<?php echo $save['js_id']; ?> <?php echo ( $js_id == $save['js_id'] ) ? 'wt-previous--current' : ''; ?>">
-                        <div class="wt-previous__name"><?php echo ( $js_data->devises ) ? "{$obj_data->get_device( $js_data->devises )['name']} — " : ''; ?><span data-utc="<?php echo gmdate( 'm/d/Y G:i:s T', strtotime( $save['date'] ) ); ?>" data-masc="beauty"><?php echo $save['date']; ?></span></div>
+                        <div class="wt-previous__name"><?php echo $name; ?><span data-utc="<?php echo gmdate( 'm/d/Y G:i:s T', strtotime( $save['date'] ) ); ?>" data-masc="beauty"><?php echo $save['date']; ?></span></div>
                         <a class="wt-previous__view" target="_blank" href="<?php echo "{$current_link}?js_id={$save['js_id']}"; ?>">View</a>
                         <div class="wt-previous__remove" data-js-id="<?php echo $save['js_id']; ?>">Remove</div>
                     </div>
@@ -251,5 +257,23 @@ class THESPA_shortcodes {
 		<?php
 		endif;
 		return ob_get_clean();
+	}
+
+	/**
+	 * Return first part of name of save.
+	 *
+	 * @param  THESPA_data $obj_data
+	 * @param  object $js_data
+	 * @return string
+	 */
+	public static function getName( $obj_data, $js_data ) {
+		if ( $js_data->devises ) {
+			return "{$obj_data->get_device( $js_data->devises )['name']} — ";
+        }
+		if ( $js_data->type AND $js_data->volume ) {
+			return "{$obj_data->get_volume( $js_data->type )['name']} - {$js_data->volume}L — ";
+        }
+
+		return '';
 	}
 }

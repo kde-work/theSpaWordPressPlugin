@@ -3,7 +3,7 @@
  * THESPA_waterTesting Class.
  *
  * @package THESPA_waterTesting\Classes
- * @version 1.0.7
+ * @version 1.0.8
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -17,7 +17,7 @@ class THESPA_waterTesting {
 	 *
 	 * @var string
 	 */
-	public $version = '1.0.7';
+	public $version = '1.0.8';
 
 	/**
 	 * The single instance of the class.

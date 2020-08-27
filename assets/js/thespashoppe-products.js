@@ -25,7 +25,7 @@
         });
 
         // Add to cart Button
-        this.$body.on('click', '.wt-product__button', function (e) {
+        this.$body.on('click', '.wt-product:not(.wt-product--loading):not(.wt-product--to-cart) .wt-product__button', function (e) {
             _this.add_to_cart($(this));
         });
     };
@@ -37,7 +37,9 @@
      * @return void
      */
     SpaProducts.prototype.add_to_cart = function($this) {
-        let $par = $this.closest('.wt-product__cont'),
+        let _this = this,
+            $product = $this.closest('.wt-product'),
+            $par = $this.closest('.wt-product__cont'),
             $input = $('.wt-product__input', $par),
             this_id = parseInt($this.data('id')),
             this_count = parseInt($input.val());
@@ -49,24 +51,25 @@
             dataType: 'json',
             async: true,
             data: {
-                'action' : 'woocommerce_add_variation_to_cart',
+                'action' : 'woocommerce_add_to_cart',
                 'product_id' : this_id,
-                'variation_id' : this_id,
                 'quantity' : this_count,
             },
             beforeSend: function (xhr, ajaxOptions, thrownError) {
-                // thespashoppe.loader_start();
+                _this.loader_start($product);
             },
             success: function (data) {
                 try {
                     console.log(data);
-
+                    if (data.cart_hash !== void 0) {
+                        $product.addClass('wt-product--to-cart');
+                    }
                 } catch (err) {
                     thespashoppe.error(err);
                 }
             },
             complete: function (xhr, ajaxOptions, thrownError) {
-                // thespashoppe.loader_stop();
+                _this.loader_stop($product);
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.error('THESPA_Requests-@11: '+xhr.status);
@@ -74,6 +77,26 @@
                 thespashoppe.error(thrownError + ', status: ' + xhr.status);
             }
         });
+    };
+
+    /**
+     * Loader start.
+     *
+     * @param  $product
+     * @return void
+     */
+    SpaProducts.prototype.loader_start = function($product) {
+        $product.addClass('wt-product--loading');
+    };
+
+    /**
+     * Loader stop.
+     *
+     * @param  $product
+     * @return void
+     */
+    SpaProducts.prototype.loader_stop = function($product) {
+        $product.removeClass('wt-product--loading');
     };
 
     /**
@@ -91,7 +114,6 @@
         count = (count > 0) ? count : 1;
         $input.val(count);
     };
-
 
     // Init.
     $(function () {

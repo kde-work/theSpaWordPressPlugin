@@ -28,7 +28,8 @@
         // Initial form
         this.initial_form();
         this.events_init();
-        this.load_init();
+        this.load_init_data();
+        this.load();
         this.set_id();
 
         setTimeout(function () {
@@ -221,7 +222,7 @@
      *
      * @return $
      */
-    TheSpaShopPE.prototype.load_init = function() {
+    TheSpaShopPE.prototype.load_init_data = function() {
         let data_map = this.to_json(Cookies.get('TheSpaShopPE.data_map'));
         let is_change = false;
 
@@ -236,10 +237,6 @@
                 console.log('cookie init', data_map);
                 this.data_map = data_map;
             }
-        }
-
-        if (this.data_map.type !== void 0 && this.data_map.type !== null) {
-            this.load(is_change);
         }
     };
 
@@ -271,35 +268,36 @@
     /**
      * Load save.
      *
-     * @param  is_change
      * @return $
      */
-    TheSpaShopPE.prototype.load = function(is_change) {
-        this.is_change_data_map = false;
+    TheSpaShopPE.prototype.load = function() {
+        if (this.data_map.type !== void 0 && this.data_map.type !== null) {
+            this.is_change_data_map = false;
 
-        if (this.data_map.devises !== void 0 && this.data_map.devises !== null) {
-            this.change_select('devises', this.data_map.devises, false);
-        } else {
-            if (this.data_map.type !== void 0 && this.data_map.type !== null) {
-                this.change_select('type', this.data_map.type, false);
-                if (this.data_map.volume !== void 0 && this.data_map.volume !== null) {
-                    this.change_input('volume', this.data_map.volume, false);
+            if (this.data_map.devises !== void 0 && this.data_map.devises !== null && this.data_map.devises) {
+                this.change_select('devises', this.data_map.devises, false);
+            } else {
+                if (this.data_map.type !== void 0 && this.data_map.type !== null) {
+                    this.change_select('type', this.data_map.type, false);
+                    if (this.data_map.volume !== void 0 && this.data_map.volume !== null) {
+                        this.change_input('volume', this.data_map.volume, false);
+                    }
                 }
             }
-        }
-        if (this.data_map.chemical !== void 0 && this.data_map.chemical !== null) {
-            this.change_select('chemical', this.data_map.chemical, false);
-        }
-
-        for (let key in this.data_map.test) {
-            if (this.data_map.test.hasOwnProperty(key)) {
-                let $result_box = $('#wt-tests--' + this.data_map.test[key]);
-
-                $result_box.prop('checked', true).trigger('change');
+            if (this.data_map.chemical !== void 0 && this.data_map.chemical !== null) {
+                this.change_select('chemical', this.data_map.chemical, false);
             }
-        }
 
-        this.is_change_data_map = true;
+            for (let key in this.data_map.test) {
+                if (this.data_map.test.hasOwnProperty(key)) {
+                    let $result_box = $('#wt-tests--' + this.data_map.test[key]);
+
+                    $result_box.prop('checked', true).trigger('change');
+                }
+            }
+
+            this.is_change_data_map = true;
+        }
     };
 
     /**
@@ -558,7 +556,7 @@
                     'background-image' : 'url('+ products[i].img +')',
                 });
                 $product_new.find('.wt-product__title').text(products[i].name);
-                $product_new.find('a').attr('href', products[i].url);
+                $product_new.find('a:not(.wt-product__button-text--to-cart)').attr('href', products[i].url);
                 $product_new.find('.wt-product__cost').html(products[i].cost);
                 $product_new.find('.wt-product__button').data('id', products[i].id);
             }

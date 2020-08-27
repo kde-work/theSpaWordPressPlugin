@@ -3,7 +3,7 @@
  * Media management Class.
  *
  * @package THESPA_waterTesting\Classes
- * @version 1.0.7
+ * @version 1.0.8
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -23,7 +23,7 @@ class THESPA_Media {
 		wp_register_script( 'thespashoppe-actions', plugins_url( '/assets/js/thespashoppe-actions.js', THESPA_ASSETS_DIR ), null, THESPA_VERSION );
 		wp_register_script( 'select2', plugins_url( '/assets/js/select2.min.js', THESPA_ASSETS_DIR ), null, THESPA_VERSION );
 		wp_register_script( 'js-cookie', plugins_url( '/assets/js/js.cookie.min.js', THESPA_ASSETS_DIR ), null, THESPA_VERSION );
-		wp_register_script( 'uuidv4', plugins_url( '/assets/js/uuidv4.min.js', THESPA_ASSETS_DIR ), null, THESPA_VERSION );
+		wp_register_script( 'uuidv4', plugins_url( '/assets/js/uuidv4.min.js', THESPA_ASSETS_DIR ), null, THESPA_VERSION ); // id generator
 		wp_register_script( 'date-format', plugins_url( '/assets/js/date-format.js', THESPA_ASSETS_DIR ), null, THESPA_VERSION );
 		wp_register_script( 'thespashoppe-products', plugins_url( '/assets/js/thespashoppe-products.js', THESPA_ASSETS_DIR ), null, THESPA_VERSION );
 	}

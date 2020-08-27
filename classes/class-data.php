@@ -3,7 +3,7 @@
  * THESPA_data Class.
  *
  * @package THESPA_data\Classes
- * @version 1.0.7
+ * @version 1.0.8
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -54,7 +54,7 @@ class THESPA_data {
 		// get 'devices'
 		$this->devices = $wpdb->get_results( "SELECT * FROM `{$wpdb->prefix}spa_devices` as devices", ARRAY_A );
 
-		// get 'volume'
+		// get 'volume'/'type'
 		$this->data = $wpdb->get_results( "SELECT * FROM `{$wpdb->prefix}spa_volume` as volume", ARRAY_A );
 
 		for ( $i = 0; $i < count( $this->data ); $i++ ) {
@@ -168,15 +168,19 @@ class THESPA_data {
 			}
 		}
 
-		for ($i = 0; $i < count( $ids ); $i++ ) {
-			$product = wc_get_product( $ids[$i] );
-			$this->products[$i] = [
-				'id' => $ids[$i],
-				'name' => $product->get_title(),
-				'url' => $product->get_permalink(),
-				'img' => wp_get_attachment_image_src( get_post_thumbnail_id( $ids[$i] ), 'medium', true )[0],
-				'cost' => $product->get_price_html(),
-			];
+		$i = 0;
+		foreach ( $ids as $id ) {
+			$product = wc_get_product( $id );
+			if ( is_object( $product ) ) {
+				$this->products[$i] = [
+					'id' => $id,
+					'name' => $product->get_title(),
+					'url' => $product->get_permalink(),
+					'img' => wp_get_attachment_image_src( get_post_thumbnail_id( $id ), 'medium', true )[0],
+					'cost' => $product->get_price_html(),
+				];
+				$i++;
+			}
 		}
 	}
 
@@ -267,6 +271,21 @@ class THESPA_data {
 		foreach ( $this->devices as $device ) {
 			if ( $device['id'] == $id ) {
 				return $device;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Return type by id.
+	 *
+	 * @param  int $id
+	 * @return array|bool
+	 */
+	public function get_volume( $id ) {
+		foreach ( $this->data as $volume ) {
+			if ( $volume['id'] == $id ) {
+				return $volume;
 			}
 		}
 		return false;

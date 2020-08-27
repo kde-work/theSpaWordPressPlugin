@@ -497,6 +497,38 @@
     width: 100%;
     z-index: 30;
 }
+.wt-product__button-text {
+    display: none;
+}
+.wt-product__button-text--default {
+    display: block;
+}
+.wt-product--loading .wt-product__button-text--loading {
+    display: flex;
+}
+.wt-product--to-cart .wt-product__button-text--to-cart {
+    display: inline;
+}
+.wt-product--loading .wt-product__button-text--default, .wt-product--to-cart .wt-product__button-text--default {
+    display: none;
+}
+.wt-product--loading .wt-product__button {
+    background: #000;
+}
+.wt-product__button-text--loading {
+    background: url(../img/spinner.png) no-repeat center center / 175%;
+    height: 27px;
+    margin: auto;
+    width: 27px;
+}
+.wt-loading-init {
+    background: url(../img/spinner.png);
+    height: 27px;
+    left: -999px;
+    position: fixed;
+    width: 27px;
+    z-index: -9;
+}
 @media screen and (max-width: 800px) {
     .water-testing .water-testing__col {
         margin-left: 0;

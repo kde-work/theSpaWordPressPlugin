@@ -3,7 +3,7 @@
  * THESPA_Requests Class.
  *
  * @package THESPA_waterTesting\Classes
- * @version 1.0.7
+ * @version 1.0.8
  */
 defined( 'ABSPATH' ) || exit;
 
