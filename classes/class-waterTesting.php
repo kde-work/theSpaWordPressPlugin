@@ -3,7 +3,7 @@
  * THESPA_waterTesting Class.
  *
  * @package THESPA_waterTesting\Classes
- * @version 1.0.5
+ * @version 1.0.7
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -17,7 +17,7 @@ class THESPA_waterTesting {
 	 *
 	 * @var string
 	 */
-	public $version = '1.0.5';
+	public $version = '1.0.7';
 
 	/**
 	 * The single instance of the class.
@@ -52,6 +52,7 @@ class THESPA_waterTesting {
 		include_once THESPA_PLUGIN_DIR . 'classes/class-shortCodes.php';
 		include_once THESPA_PLUGIN_DIR . 'classes/class-media.php';
 		include_once THESPA_PLUGIN_DIR . 'classes/class-data.php';
+		include_once THESPA_PLUGIN_DIR . 'classes/class-requests.php';
 	}
 
 	/**
@@ -81,9 +82,8 @@ class THESPA_waterTesting {
 	 * Hook into actions and filters.
 	 */
 	private function init_hooks() {
-//		add_action( 'wp_ajax_nopriv_easyping_sign_in', array( 'THESPA_Requests', 'sign_in_easyping' ), 10 );
-//		add_action( 'wp_ajax_nopriv_easyping_add_funds', array( 'THESPA_Requests', 'add_funds' ), 20 );
-//		add_action( 'wp_ajax_nopriv_easyping_oauth_url', array( 'THESPA_Requests', 'easyping_oauth_url' ), 30 );
+		add_action( 'wp_ajax_thespa_save', array( 'THESPA_Requests', 'save' ), 10 );
+		add_action( 'wp_ajax_thespa_remove_test', array( 'THESPA_Requests', 'remove_test' ), 10 );
 
 		add_action( 'wp_enqueue_scripts', array( 'THESPA_media', 'register' ), 10 );
 

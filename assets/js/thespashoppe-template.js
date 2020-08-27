@@ -8,6 +8,7 @@
      * Form water testing Template Class.
      */
     function SpaTemplate() {
+        this.utc_time_to_local_with_masc();
     }
 
     /**
@@ -62,6 +63,34 @@
                 'background: linear-gradient(to right,  '+ color[0] +' 0%,'+ color[1] +' 100%);\n' +
                 'filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=\''+ color[0] +'\', endColorstr=\''+ color[1] +'\',GradientType=1 );\n';
         }
+    };
+
+    /**
+     * Setup UTC time to Local.
+     */
+    SpaTemplate.prototype.utc_time_to_local_with_masc = function() {
+        let $time = $('[data-utc][data-masc]');
+
+        $time.each(function () {
+            let $this = $(this),
+                this_date = $this.data('utc'),
+                this_masc = $this.data('masc'),
+                date = new Date(this_date);
+
+            $this.trigger('epme.date-before-with-masc');
+            switch (this.tagName.toLowerCase()) {
+                case 'input':
+                    if (date instanceof Date && !isNaN(date)) {
+                        $this.val(date.spa_format(this_masc));
+                    }
+                    break;
+                default:
+                    if (date instanceof Date && !isNaN(date)) {
+                        $this.text(date.spa_format(this_masc));
+                    }
+            }
+            $this.trigger('epme.date-complete-with-masc');
+        });
     };
 
     window.SpaTemplate = SpaTemplate;

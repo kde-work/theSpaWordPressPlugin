@@ -3,7 +3,7 @@
  * Shortcodes Class.
  *
  * @package THESPA_waterTesting\Classes
- * @version 1.0.5
+ * @version 1.0.7
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -28,18 +28,29 @@ class THESPA_shortcodes {
         $volume = $obj_data->get_list_of( 'volume' );
 		$devises = $obj_data->get_list_of( 'devices' );
 		$products = $obj_data->get_list_of( 'products' );
+		$init = $obj_data->get_save_by_id( $_GET['js_id'] );
+		$current_link = get_the_permalink( get_the_ID() );
+
+		if ( empty( $init ) AND !$_COOKIE['TheSpaShopPE_data_map'] ) {
+			$init = $obj_data->get_init_blank_param();
+        }
 
 		ob_start();
+//		echo do_shortcode('[login-with-ajax registration=1]');
+//		echo do_shortcode('[lrm_form default_tab="login" logged_in_message="You are currently logged in!"]');
 //		echo "<div style='white-space: pre;'>"; print_r($data); echo "</div>"; die;
 		?>
 		<div class="water-testing">
             <form class="water-testing__form">
+                <div class="wt-previous">
+                    <?php echo self::getSaves( $obj_data ); ?>
+                </div>
                 <div class="water-testing__row">
                     <h4 class="water-testing__h">Water test</h4>
                 </div>
                 <div class="water-testing__row">
                     <div class="water-testing__col water-testing__col--100p">
-                        <div class="water-testing__title">1. Select type of your model</div>
+                        <div class="water-testing__title">1. What are you testing?</div>
                     </div>
                     <div class="water-testing__col">
                         <label for="water-testing--devises" class="water-testing__label">Your model</label>
@@ -70,7 +81,7 @@ class THESPA_shortcodes {
                 </div>
                 <div class="water-testing__row">
                     <div class="water-testing__col water-testing__col--100p">
-                        <div class="water-testing__title">3. Chemical name</div>
+                        <div class="water-testing__title">3. What test strips are you using?</div>
                     </div>
                     <div class="water-testing__col">
                         <label for="water-testing--chemical" class="water-testing__label">Type of your test</label>
@@ -88,58 +99,33 @@ class THESPA_shortcodes {
                     <div class="water-testing__col water-testing__col--100p">
                         <div class="wt-tests">
                             <div class="wt-tests__item wt-tests__item--ph wt-tests__item--deactivate">
-                                <div class="wt-tests__title">pH scale</div>
-                                <div class="wt-tests__body">
-                                    <div class="wt-tests__line wt-tests__line--res-1">
-                                        <input type="radio" name="wt-tests--TEST-NAME" id="wt-tests--res-1" class="wt-tests__radio" autocomplete="off">
-                                        <label for="wt-tests--res-1" class="wt-tests__label"><span style="background:#D70825;"></span>>8.4</label>
-                                    </div>
-                                    <div class="wt-tests__line wt-tests__line--res-2">
-                                        <input type="radio" name="wt-tests--TEST-NAME" id="wt-tests--res-2" class="wt-tests__radio" autocomplete="off">
-                                        <label for="wt-tests--res-2" class="wt-tests__label"><span style="background: #d7282d;"></span>8.0-8.4</label>
-                                    </div>
-                                    <div class="wt-tests__line wt-tests__line--res-3">
-                                        <input type="radio" name="wt-tests--TEST-NAME" id="wt-tests--res-3" class="wt-tests__radio" autocomplete="off">
-                                        <label for="wt-tests--res-3" class="wt-tests__label"><span style="background: #d84930;"></span>7.8-8.0</label>
+                                <div class="wt-tests__title">pH</div>
+                                <div class="wt-tests__body"><div class="wt-tests__line wt-tests__line--1">
+                                        <input type="radio" name="wt-tests--1" id="wt-tests--1" value="1" data-parent="1" data-name="value" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--1" class="wt-tests__label"><span style="background:#D70825;"></span>8.4</label>
+                                    </div><div class="wt-tests__line wt-tests__line--2">
+                                        <input type="radio" name="wt-tests--1" id="wt-tests--2" value="2" data-parent="1" data-name="value" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--2" class="wt-tests__label"><span style="background:#D84A30;"></span>7.8</label>
+                                    </div><div class="wt-tests__line wt-tests__line--3">
+                                        <input type="radio" name="wt-tests--1" id="wt-tests--3" value="3" data-parent="1" data-name="value" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--3" class="wt-tests__label"><span style="background:#DB5100;"></span>7.2</label>
                                     </div>
                                 </div>
                             </div>
-                            <?php /*
-                            <div class="wt-tests__item wt-tests__item--ph">
-                                <div class="wt-tests__title">pH scale</div>
-                                <div class="wt-tests__body">
-                                    <div class="wt-tests__line wt-tests__line--res-1">
-                                        <input type="radio" name="wt-tests--TEST-NAME" id="wt-tests--res-1" class="wt-tests__radio" autocomplete="off">
-                                        <label for="wt-tests--res-1" class="wt-tests__label"><span></span>>8.4</label>
-                                    </div>
-                                    <div class="wt-tests__line wt-tests__line--res-2">
-                                        <input type="radio" name="wt-tests--TEST-NAME" id="wt-tests--res-2" class="wt-tests__radio" autocomplete="off">
-                                        <label for="wt-tests--res-2" class="wt-tests__label"><span></span>8.0-8.4</label>
-                                    </div>
-                                    <div class="wt-tests__line wt-tests__line--res-3">
-                                        <input type="radio" name="wt-tests--TEST-NAME" id="wt-tests--res-3" class="wt-tests__radio" autocomplete="off">
-                                        <label for="wt-tests--res-3" class="wt-tests__label"><span></span>7.8-8.0</label>
+                            <div class="wt-tests__item wt-tests__item--2 wt-tests__item--deactivate">
+                                <div class="wt-tests__title">Alkalinity</div>
+                                <div class="wt-tests__body"><div class="wt-tests__line wt-tests__line--9">
+                                        <input type="radio" name="wt-tests--2" id="wt-tests--9" value="9" data-parent="2" data-name="value" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--9" class="wt-tests__label"><span style="background:#C69021;"></span>0 ppm</label>
+                                    </div><div class="wt-tests__line wt-tests__line--10">
+                                        <input type="radio" name="wt-tests--2" id="wt-tests--10" value="10" data-parent="2" data-name="value" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--10" class="wt-tests__label"><span style="background:#A49634;"></span>40 ppm</label>
+                                    </div><div class="wt-tests__line wt-tests__line--11">
+                                        <input type="radio" name="wt-tests--2" id="wt-tests--11" value="11" data-parent="2" data-name="value" class="wt-tests__radio" autocomplete="off">
+                                        <label for="wt-tests--11" class="wt-tests__label"><span style="background:#858B3D;"></span>80 ppm</label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="wt-tests__item wt-tests__item--a">
-                                <div class="wt-tests__title">Alkalinity scale</div>
-                                <div class="wt-tests__body">
-                                    <div class="wt-tests__line wt-tests__line--res-4">
-                                        <input type="radio" name="wt-tests--TEST-NAME-a" id="wt-tests--res-4" class="wt-tests__radio" autocomplete="off">
-                                        <label for="wt-tests--res-4" class="wt-tests__label"><span></span>0 ppm</label>
-                                    </div>
-                                    <div class="wt-tests__line wt-tests__line--res-5">
-                                        <input type="radio" name="wt-tests--TEST-NAME-a" id="wt-tests--res-5" class="wt-tests__radio" autocomplete="off">
-                                        <label for="wt-tests--res-5" class="wt-tests__label"><span></span>20 – 40 ppm</label>
-                                    </div>
-                                    <div class="wt-tests__line wt-tests__line--res-6">
-                                        <input type="radio" name="wt-tests--TEST-NAME-a" id="wt-tests--res-6" class="wt-tests__radio" autocomplete="off">
-                                        <label for="wt-tests--res-6" class="wt-tests__label"><span></span>40 – 80 ppm</label>
-                                    </div>
-                                </div>
-                            </div>
-                            */ ?>
                         </div>
                     </div>
                     <div class="water-testing__col" style="display:none;">
@@ -154,33 +140,15 @@ class THESPA_shortcodes {
                     <div class="water-testing__hs"><span>Results</span></div>
                 </div>
                 <div class="water-testing__col wt-result-boxes">
-                    <div class="water-testing__title">Test result</div>
+                    <div class="water-testing__title">Water Balancing Adjustments</div>
                     <div class="water-testing__result-box wt-result-box wt-result-box--t">
                         <div class="water-testing__icon water-testing__icon--bell water-testing__icon--brown"></div>
                         <div class="water-testing__result water-testing__result--regular"><span class="water-testing__test">%TEST%</span> <span class="water-testing__prefix">You need add </span><span class="water-testing__value">%VALUE%</span><span class="water-testing__postfix"> of </span><span class="water-testing__result-product">%PRODUCT%</span><span class="water-testing__dot">.</span></div>
                         <div class="water-testing__result water-testing__result--text"><span class="water-testing__test">%TEST%</span> <span class="water-testing__cont"></span></div>
                     </div>
                 </div>
-                <div class="water-testing__col water-testing__col--100p water-testing__col--actions">
-                    <div class="water-testing__title">Actions</div>
-                    <div class="wt-result-actions">
-                        <div class="wt-result-action wt-button wt-result-action--print">
-                            <div class="water-testing__icon water-testing__icon--print water-testing__icon--brown"></div>
-                            <div class="wt-result-action__text">Print</div>
-                        </div>
-                        <div class="wt-result-action wt-button wt-result-action--to-email">
-                            <div class="water-testing__icon water-testing__icon--mail water-testing__icon--brown"></div>
-                            <div class="wt-result-action__text">Send me to email</div>
-                        </div>
-                    </div>
-                    <div class="wt-help">
-                        <div class="wt-help__title">Do you need help with test results?</div>
-                        <div class="wt-help__text">We can help you.</div>
-                        <div class="wt-help__button wt-button wt-button--shadow"><div class="water-testing__icon water-testing__icon--talk water-testing__icon--brown"></div>Get help</div>
-                    </div>
-                </div>
                 <div class="water-testing__col water-testing__col--100p wt-info-boxes water-testing__col--info">
-                    <div class="water-testing__title">This is useful</div>
+                    <div class="water-testing__title">Regular Maintenance</div>
                     <div class="water-testing__result-box wt-info-box wt-info-box--t">
                         <div class="water-testing__icon water-testing__icon--info"></div>
                         <div class="water-testing__result">
@@ -188,6 +156,32 @@ class THESPA_shortcodes {
                             <div class="wt-info-box__text"></div>
                             <div class="wt-info-box__result-product"><span class="wt-info-box__prefix">Products: </span><span class="wt-info-box__products"></span>.</div>
                         </div>
+                    </div>
+                </div>
+                <div class="water-testing__col water-testing__col--100p water-testing__col--actions">
+                    <div class="water-testing__title">Actions</div>
+                    <div class="wt-result-actions">
+                        <div class="wt-result-action wt-button wt-result-action--save <?php echo ( !is_user_logged_in() ) ? 'wt-result-action--log-in': ''; ?>">
+                            <div class="water-testing__icon water-testing__icon--save water-testing__icon--red"></div>
+                            <div class="wt-result-action__text"><?php echo ( !is_user_logged_in() ) ? 'Log in and ': ''; ?>Save</div>
+                        </div>
+                        <div class="wt-result-action wt-button wt-result-action--print">
+                            <div class="water-testing__icon water-testing__icon--print water-testing__icon--brown"></div>
+                            <div class="wt-result-action__text">Print</div>
+                        </div>
+                        <div class="wt-result-action wt-button wt-result-action--to-email">
+                            <div class="water-testing__icon water-testing__icon--mail water-testing__icon--brown"></div>
+                            <div class="wt-result-action__text">Email Results</div>
+                        </div>
+                        <div class="wt-result-action wt-button wt-result-action--new" data-href="<?php echo $current_link; ?>">
+                            <div class="water-testing__icon water-testing__icon--plus water-testing__icon--brown"></div>
+                            <div class="wt-result-action__text">New Test</div>
+                        </div>
+                    </div>
+                    <div class="wt-help">
+                        <div class="wt-help__title">Do you need help with test results?</div>
+                        <div class="wt-help__text">We can help you.</div>
+                        <div class="wt-help__button wt-button wt-button--shadow"><div class="water-testing__icon water-testing__icon--talk water-testing__icon--brown"></div>Get help</div>
                     </div>
                 </div>
                 <div class="water-testing__col water-testing__col--100p water-testing__col--products">
@@ -200,12 +194,12 @@ class THESPA_shortcodes {
                                 <div class="wt-product__meta">
                                     <div class="wt-product__cost"></div>
                                     <div class="wt-product__count">
-                                        <div class="wt-product__count-btn wt-product__count-btn--minus">−</div>
-                                        <input type="text" name="count" title="Count of product" value="1" autocomplete="off">
-                                        <div class="wt-product__count-btn wt-product__count-btn--plus">+</div>
+                                        <div class="wt-product__count-btn wt-product__count-btn--minus" data-count="-1">−</div>
+                                        <input type="text" name="count" title="Count of product" value="1" autocomplete="off" class="wt-product__input">
+                                        <div class="wt-product__count-btn wt-product__count-btn--plus" data-count="1">+</div>
                                     </div>
                                 </div>
-                                <div class="wt-product__button">Add to cart</div>
+                                <div class="wt-product__button" data-id="">Add to cart</div>
                             </div>
                         </div>
                     </div>
@@ -215,7 +209,47 @@ class THESPA_shortcodes {
         <script type="application/json" id="water-testing-data"><?php echo json_encode( $data ); ?></script>
         <script type="application/json" id="water-testing-products"><?php echo json_encode( $products ); ?></script>
         <script type="application/json" id="water-testing-devises"><?php echo json_encode( $devises ); ?></script>
+        <script type="application/json" id="water-testing-init"><?php echo json_encode( $init ); ?></script>
 		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Show saves html.
+	 *
+	 * @param  object|bool $obj_data
+	 * @return string
+	 */
+	public static function getSaves( $obj_data = false ) {
+        if ( $obj_data === false ) {
+	        $obj_data = new THESPA_data();
+        }
+		$saves = $obj_data->get_saves();
+		$current_link = get_the_permalink( get_the_ID() );
+		$js_id = ( isset( $_GET['js_id'] ) AND $_GET['js_id'] ) ? $_GET['js_id'] : '';
+		$js_id = ( isset( $_POST['id'] ) AND $_POST['id'] ) ? $_POST['id'] : $js_id;
+
+		ob_start();
+		if ( !empty( $saves ) ) :
+		?>
+        <div class="water-testing__row water-testing__row--previous">
+            <h4 class="water-testing__h water-testing__h--small">Previous tests</h4>
+            <div class="wt-previous__items">
+                <?php foreach ( $saves as $save ) {
+                    $js_data = json_decode( $save['data'] );
+                    ?>
+                    <div class="wt-previous__item wt-previous--<?php echo $save['js_id']; ?> <?php echo ( $js_id == $save['js_id'] ) ? 'wt-previous--current' : ''; ?>">
+                        <div class="wt-previous__name"><?php echo ( $js_data->devises ) ? "{$obj_data->get_device( $js_data->devises )['name']} — " : ''; ?><span data-utc="<?php echo gmdate( 'm/d/Y G:i:s T', strtotime( $save['date'] ) ); ?>" data-masc="beauty"><?php echo $save['date']; ?></span></div>
+                        <a class="wt-previous__view" target="_blank" href="<?php echo "{$current_link}?js_id={$save['js_id']}"; ?>">View</a>
+                        <div class="wt-previous__remove" data-js-id="<?php echo $save['js_id']; ?>">Remove</div>
+                    </div>
+                    <?php
+                }
+                ?>
+            </div>
+        </div>
+		<?php
+		endif;
 		return ob_get_clean();
 	}
 }

@@ -8,21 +8,34 @@
      * Form water testing.
      */
     function TheSpaShopPE() {
+        let _this = this;
+        this.$body = $('body');
         this.template = new SpaTemplate();
         this.data_form = TheSpaShopPE.prototype.initial_data($('#water-testing-data'));
         this.products = TheSpaShopPE.prototype.initial_data($('#water-testing-products'));
+        this.init = TheSpaShopPE.prototype.initial_data($('#water-testing-init'));
         this.current_products = [];
         this.current_extra_products = [];
         this.filter = [];
         this.devises = TheSpaShopPE.prototype.initial_data($('#water-testing-devises'));
-        this.data_map = {'type':null, 'volume':null, 'chemical':null, 'test':{}};
-        this.$body = $('body');
+        this.data_map = {'id':null, 'devises':null, 'type':null, 'volume':null, 'chemical':null, 'test':{}};
+        this.is_change_data_map = true;
 
         console.log(this.data_form, this.products); // TODO REMOVE THIS
-        
+
+        this.loader_start();
+
         // Initial form
         this.initial_form();
         this.events_init();
+        this.load_init();
+        this.set_id();
+
+        setTimeout(function () {
+            _this.auto_save();
+        }, 50);
+
+        this.loader_stop();
     }
 
     /**
@@ -46,14 +59,52 @@
     };
 
     /**
+     * Close window alert.
+     *
+     * @param  init
+     * @return void
+     */
+    TheSpaShopPE.prototype.onbeforeunload = function(init) {
+        let _this = this;
+        this.preinit = init;
+
+        window.onbeforeunload = function () {
+            if (_this.is_change()) {
+                return "The changed data is not saved. Close the page?";
+            }
+            return null;
+        };
+    };
+
+    /**
+     * Any changes with server init?
+     *
+     * @return boolean
+     */
+    TheSpaShopPE.prototype.is_change = function() {
+        return (this.preinit !== void 0 && this.preinit !== JSON.stringify(this.data_map));
+    };
+
+    /**
      * Setup form data.
      *
+     * @param  $elem
      * @return json
      */
-    TheSpaShopPE.prototype.initial_data = function( $elem ) {
-        if ($elem.length) {
+    TheSpaShopPE.prototype.initial_data = function($elem) {
+        return this.to_json($elem.text());
+    };
+
+    /**
+     * Setup form data.
+     *
+     * @param  data
+     * @return json
+     */
+    TheSpaShopPE.prototype.to_json = function(data) {
+        if (data !== void 0 && data.length) {
             try {
-                return JSON.parse($elem.text());
+                return JSON.parse(data);
             } catch (err) {
                 TheSpaShopPE.prototype.error(err);
             }
@@ -65,19 +116,26 @@
      */
     TheSpaShopPE.prototype.events_init = function() {
         let _this = this;
-        
+
+        // Change Select and Input Text
         this.$body.on('change', '.water-testing__select, .water-testing__input', function (e) {
             let $this = $(this),
                 this_name = $this.attr('name');
             _this.change_item($this, this_name);
         });
 
+        // Change Radio
         this.$body.on('change', '.wt-tests__radio', function (e) {
             let $this = $(this),
-                this_name = $this.data('name');
+                this_name = $this.data('name'),
+                $par = $this.closest('.wt-tests__body').find('wt-radio-selected');
+
+            $par.find('wt-radio-selected').removeClass('wt-radio-selected');
+            $this.parent('div').addClass('wt-radio-selected');
             _this.change_item($this, this_name);
         });
 
+        // Change input
         this.$body.on('keydown', '.water-testing__input--validate-number', {obj: _this}, TheSpaShopPE.prototype.validate_number);
     };
 
@@ -96,6 +154,11 @@
         switch (select_type) {
             case 'devises' :
                 let devise = this.get_list_by_id($elem.val(), this.devises, true);
+
+                if (this.is_change_data_map === true) {
+                    this.data_map.devises = $elem.val();
+                }
+
                 // if device is selected
                 if (devise !== null) {
                     this.change_input('volume', '', true);
@@ -107,9 +170,12 @@
                 }
                 break;
             case 'type' :
-                this.data_map.type = $elem.val();
-                this.data_map.volume = this.data_map.chemical = null;
-                this.data_map.test = {};
+                if (this.is_change_data_map === true) {
+                    this.data_map.type = $elem.val();
+                    this.data_map.volume = this.data_map.chemical = null;
+                    this.data_map.test = {};
+                }
+
                 if (this.data_map.type !== null) {
                     this.change_input('volume', null, false);
                 } else {
@@ -118,30 +184,122 @@
                 break;
             case 'volume' :
                 if (this.data_map.volume !== null && this.data_map.volume !== '' && this.data_map.value && $elem.val() !== '') {
-                    this.data_map.volume = $elem.val();
+                    if (this.is_change_data_map === true) {
+                        this.data_map.volume = $elem.val();
+                    }
                     this.show_results();
                 } else {
-                    this.data_map.volume = $elem.val();
-                    this.data_map.chemical = null;
-                    this.data_map.test = {};
+                    if (this.is_change_data_map === true) {
+                        this.data_map.volume = $elem.val();
+                        this.data_map.chemical = null;
+                        this.data_map.test = {};
+                    }
                     this.create_select('chemical', this.data_map.volume);
                 }
                 break;
             case 'chemical' :
-                this.data_map.chemical = $elem.val();
-                this.data_map.test = {};
+                if (this.is_change_data_map === true) {
+                    this.data_map.chemical = $elem.val();
+                    this.data_map.test = {};                                         
+                }
                 this.create_radio('test', this.data_map.chemical);
                 break;
-            case 'test' :
-                // this.data_map.test = $elem.val();
-                // this.data_map.strip = this.data_map.value = null;
-                // this.create_select('strip', this.data_map.test);
-                break;
             case 'value' :
-                this.data_map.test[$elem.data('parent')] = $elem.val();
+                if (this.is_change_data_map === true) {
+                    this.data_map.test[$elem.data('parent')] = $elem.val();
+                }
                 this.show_results();
                 break;
         }
+
+        // Save session to the cookie
+        Cookies.set('TheSpaShopPE.data_map', JSON.stringify(this.data_map), { expires: 7, path: '/' });
+    };
+
+    /**
+     * Load init.
+     *
+     * @return $
+     */
+    TheSpaShopPE.prototype.load_init = function() {
+        let data_map = this.to_json(Cookies.get('TheSpaShopPE.data_map'));
+        let is_change = false;
+
+        // Load server save init
+        if (this.init.type !== void 0 && this.init.type) {
+            console.log('server init', this.init);
+            this.data_map = this.init;
+            this.onbeforeunload(JSON.stringify(this.init));
+        } else {
+            // Load cookie init
+            if (data_map !== void 0 && data_map.type !== void 0) {
+                console.log('cookie init', data_map);
+                this.data_map = data_map;
+            }
+        }
+
+        if (this.data_map.type !== void 0 && this.data_map.type !== null) {
+            this.load(is_change);
+        }
+    };
+
+    /**
+     * Make save if necessary.
+     *
+     * @return void
+     */
+    TheSpaShopPE.prototype.auto_save = function() {
+        let save = Cookies.get('TheSpaShopPE.save');
+
+        console.log('save', save, Cookies.get('TheSpaShopPE.data_map'));
+        if (save !== void 0 && save*1 === 1) {
+            $('.wt-result-action--save:not(.wt-result-action--log-in)').trigger('click');
+        }
+    };
+
+    /**
+     * Set id if not exist.
+     *
+     * @return void
+     */
+    TheSpaShopPE.prototype.set_id = function() {
+        if (this.data_map.id === void 0 || this.data_map.id === null) {
+            this.data_map.id = uuidv4();
+        }
+    };
+
+    /**
+     * Load save.
+     *
+     * @param  is_change
+     * @return $
+     */
+    TheSpaShopPE.prototype.load = function(is_change) {
+        this.is_change_data_map = false;
+
+        if (this.data_map.devises !== void 0 && this.data_map.devises !== null) {
+            this.change_select('devises', this.data_map.devises, false);
+        } else {
+            if (this.data_map.type !== void 0 && this.data_map.type !== null) {
+                this.change_select('type', this.data_map.type, false);
+                if (this.data_map.volume !== void 0 && this.data_map.volume !== null) {
+                    this.change_input('volume', this.data_map.volume, false);
+                }
+            }
+        }
+        if (this.data_map.chemical !== void 0 && this.data_map.chemical !== null) {
+            this.change_select('chemical', this.data_map.chemical, false);
+        }
+
+        for (let key in this.data_map.test) {
+            if (this.data_map.test.hasOwnProperty(key)) {
+                let $result_box = $('#wt-tests--' + this.data_map.test[key]);
+
+                $result_box.prop('checked', true).trigger('change');
+            }
+        }
+
+        this.is_change_data_map = true;
     };
 
     /**
@@ -194,6 +352,7 @@
      * @return void
      */
     TheSpaShopPE.prototype.show_results = function() {
+        this.loader_start();
         this.remove_result_boxes();
         if (Object.keys(this.data_map.test).length === 0) {
             this.hide_result_box();
@@ -221,6 +380,7 @@
             // Show 'This is useful'
             this.show_useful();
         }
+        this.loader_stop();
     };
 
     /**
@@ -400,6 +560,7 @@
                 $product_new.find('.wt-product__title').text(products[i].name);
                 $product_new.find('a').attr('href', products[i].url);
                 $product_new.find('.wt-product__cost').html(products[i].cost);
+                $product_new.find('.wt-product__button').data('id', products[i].id);
             }
             window.products_cache = products;
         }
@@ -557,8 +718,22 @@
     };
 
     /**
+     * Loader start.
+     */
+    TheSpaShopPE.prototype.loader_start = function() {
+        this.$body.addClass('spa-loader');
+    };
+
+    /**
+     * Loader start.
+     */
+    TheSpaShopPE.prototype.loader_stop = function() {
+        this.$body.removeClass('spa-loader');
+    };
+
+    /**
      * Validate number for input.
-     * 
+     *
      * @param  event
      * @return void
      */
@@ -585,7 +760,25 @@
      * @return void
      */
     TheSpaShopPE.prototype.error = function(err) {
-        console.error(err)
+        console.error(err);
+    };
+
+    /**
+     * Return data_map.
+     *
+     * @return object
+     */
+    TheSpaShopPE.prototype.get_data = function() {
+        return this.data_map;
+    };
+
+    /**
+     * Return current id.
+     *
+     * @return object
+     */
+    TheSpaShopPE.prototype.get_id = function() {
+        return this.data_map.id;
     };
 
     // Init.

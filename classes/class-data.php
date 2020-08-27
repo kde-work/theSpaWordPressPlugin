@@ -3,7 +3,7 @@
  * THESPA_data Class.
  *
  * @package THESPA_data\Classes
- * @version 1.0.5
+ * @version 1.0.7
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -181,6 +181,65 @@ class THESPA_data {
 	}
 
 	/**
+	 * Return data form by ID.
+	 *
+	 * @param  int $js_id
+	 * @return array
+	 */
+	public function get_save_by_id( $js_id ) {
+		global $wpdb;
+
+		$r = $wpdb->get_results( $wpdb->prepare( "
+				SELECT `data` FROM `{$wpdb->prefix}spa_sessions`
+				WHERE `user_id` = '%d' AND `js_id` = '%s'
+			", get_current_user_id(), $js_id ), ARRAY_A );
+
+		if ( !empty( $r ) AND $r[0]['data'] ) {
+			return json_decode( $r[0]['data'] );
+		}
+		return [];
+	}
+
+	/**
+	 * Return data form by ID.
+	 *
+	 * @return array
+	 */
+	public function get_init_blank_param() {
+		$r = array_pop( $this->get_saves( $_GET['js_id'] ) );
+
+		if ( !empty( $r ) AND $r['data'] ) {
+			$data = json_decode( $r['data'] );
+			$data->id = null;
+			$data->chemical = null;
+			$data->test = [];
+			return $data;
+		}
+		return [];
+	}
+
+	/**
+	 * Return data form by ID.
+	 *
+	 * @param  string $exception
+	 * @return array
+	 */
+	public function get_saves( $exception = '' ) {
+		global $wpdb;
+
+		$add = '';
+		if ( $exception ) {
+			$exception = esc_sql( $exception );
+			$add = "AND `js_id` != '$exception'";
+		}
+
+		return $wpdb->get_results( $wpdb->prepare( "
+				SELECT * FROM `{$wpdb->prefix}spa_sessions`
+				WHERE `user_id` = '%d' AND `is_remove` != '1' $add
+			", get_current_user_id() ), ARRAY_A );
+	}
+
+	/**
 	 * Return data.
 	 *
 	 * @return array
@@ -196,6 +255,21 @@ class THESPA_data {
 	 */
 	public function get_devices() {
 		return apply_filters( 'THESPA_devices', $this->devices );
+	}
+
+	/**
+	 * Return device by id.
+	 *
+	 * @param  int $id
+	 * @return array|bool
+	 */
+	public function get_device( $id ) {
+		foreach ( $this->devices as $device ) {
+			if ( $device['id'] == $id ) {
+				return $device;
+			}
+		}
+		return false;
 	}
 
 	/**
