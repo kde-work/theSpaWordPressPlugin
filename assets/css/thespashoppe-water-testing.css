@@ -135,6 +135,7 @@
 .wt-product {
     border-radius: 2px;
     box-shadow: 1px 1px 24px rgba(0,0,0,.08);
+    height: max-content;
     margin: 20px;
     overflow: hidden;
     width: 220px;
@@ -184,6 +185,7 @@
     border: 3px solid #222;
     border-radius: 2px;
     margin: 14px 0 7px;
+    min-height: 35px;
     padding: 6px 8px;
     text-align: center;
     transition: all 0.2s ease-in-out;
@@ -301,6 +303,9 @@
 .water-testing__icon--gray {
     background-color: #999;
 }
+.water-testing__icon--white {
+    background-color: #fff;
+}
 .water-testing__icon--info {
     -webkit-mask-image: url(../img/info.svg);
     mask-image: url(../img/info.svg);
@@ -398,6 +403,9 @@
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
+}
+textarea.wt-modal__input {
+    height: 118px;
 }
 #yith-welrp .yith-welrp-submit-button {
     background: transparent;
@@ -528,6 +536,112 @@
     position: fixed;
     width: 27px;
     z-index: -9;
+}
+.wt-modal {
+    display: none;
+    left: 0;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 110;
+}
+.wt-modal__box {
+    background-image: url("/wp-content/uploads/2020/03/SwimSpa_IMG_2683_web-510x382.jpg");
+    background-size: cover;
+    border-radius: 5px;
+    box-shadow: 0 -6.7px 30px rgba(0, 0, 0, 0.068), 0 2.8px 2.2px rgba(0, 0, 0, 0.044), 0 6.7px 5.3px rgba(0, 0, 0, 0.058), 0 12.5px 10px rgba(0, 0, 0, 0.08), 0 22.3px 17.9px rgba(0, 0, 0, 0.082), 0 41.8px 33.4px rgba(0, 0, 0, 0.086), 0 100px 80px rgba(0, 0, 0, 0.12);
+    color: #fff;
+    margin: auto;
+    overflow: hidden;
+    padding: 39px 70px 43px;
+    position: relative;
+    z-index: 8;
+}
+.wt-modal__box::after {
+    background-color: rgba(29,38,51,0.86);
+    content: '';
+    left: 0;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: -1;
+}
+.wt-modal__title {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 29px;
+    line-height: 1.3em;
+    text-align: center;
+    margin: 0 0 16px 0;
+}
+.wt-modal__label {
+    display: block;
+}
+.wt-modal__input {
+    border: none !important;
+    margin: 4px 0;
+    padding: 15px 18px !important;
+    width: 100%;
+}
+.wt-modal .wt-button {
+    background: transparent;
+    border-color: #fff;
+    border-width: 2px;
+    color: #fff;
+    font-weight: 500;
+    letter-spacing: 4px;
+    margin-left: auto;
+    margin-right: auto;
+    text-transform: uppercase;
+    width: 100%;
+}
+.wt-modal .wt-button:hover {
+    opacity: 1;
+    box-shadow: none;
+    background-color: rgba(255,255,255,0.08);
+}
+.wt-modal__bg {
+    background: rgba(255, 255, 255, 0.2);
+    left: 0;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+}
+.wt-modal__complete, .wt-modal__loading {
+    display: none;
+}
+.wt-modal__box--loading .wt-modal__loading, .wt-modal__box--complete .wt-modal__complete {
+    display: flex;
+}
+.wt-modal__box--loading .wt-modal__body, .wt-modal__box--complete .wt-modal__body {
+    visibility: collapse;
+}
+.wt-modal__loading, .wt-modal__complete {
+    left: 0;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 6;
+}
+.wt-modal__complete > div {
+    margin: auto;
+    padding: 36px;
+    text-align: center;
+}
+.wt-modal__complete .wt-modal__complete-text {
+    font-size: 120%;
+    margin-bottom: 8px;
+}
+.wt-modal__loading div {
+    background: url(../img/spinner.png) no-repeat center center / 175%;
+    height: 27px;
+    margin: auto;
+    width: 27px;
 }
 @media screen and (max-width: 800px) {
     .water-testing .water-testing__col {

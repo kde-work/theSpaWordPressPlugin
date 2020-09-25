@@ -3,7 +3,7 @@
  * Shortcodes Class.
  *
  * @package THESPA_waterTesting\Classes
- * @version 1.0.8
+ * @version 1.0.11
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -181,7 +181,7 @@ class THESPA_shortcodes {
                     <div class="wt-help">
                         <div class="wt-help__title">Do you need help with test results?</div>
                         <div class="wt-help__text">We can help you.</div>
-                        <div class="wt-help__button wt-button wt-button--shadow"><div class="water-testing__icon water-testing__icon--talk water-testing__icon--brown"></div>Get help</div>
+                        <div class="wt-help__button wt-button wt-button--shadow wt-result-action--get-help"><div class="water-testing__icon water-testing__icon--talk water-testing__icon--brown"></div>Get help</div>
                     </div>
                 </div>
                 <div class="water-testing__col water-testing__col--100p water-testing__col--products">
@@ -210,11 +210,63 @@ class THESPA_shortcodes {
                     <div class="wt-loading-init"></div>
                 </div>
             </div>
+            <?php echo self::emailForm( 'to-email', 'Email Results', 'Send Email', false ); ?>
+            <?php echo self::emailForm( 'get-help', 'Get Help', 'Send Email', true ); ?>
         </div>
         <script type="application/json" id="water-testing-data"><?php echo json_encode( $data ); ?></script>
         <script type="application/json" id="water-testing-products"><?php echo json_encode( $products ); ?></script>
         <script type="application/json" id="water-testing-devises"><?php echo json_encode( $devises ); ?></script>
         <script type="application/json" id="water-testing-init"><?php echo json_encode( $init ); ?></script>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Show saves html.
+	 *
+     * @param  string $id
+     * @param  string $title
+     * @param  string $button
+     * @param  bool $is_message
+	 * @return string
+	 */
+	public static function emailForm( $id, $title = 'Email Results', $button = 'Send Email', $is_message = false ) {
+		ob_start();
+		?>
+        <div class="wt-modal wt-modal--<?php echo $id; ?>">
+            <div class="wt-modal__box">
+                <div class="wt-modal__body">
+                    <div class="wt-modal__title"><?php echo $title; ?></div>
+                    <form class="wt-modal__form" method="post" data-action="<?php echo $id; ?>">
+                        <div class="wt-modal__email">
+                            <label for="wt-email" class="wt-modal__label wt-modal__label--email">Your email</label>
+                            <?php
+                            $user = wp_get_current_user();
+                            $email = ( $user->exists() AND $user->user_email ) ? $user->user_email : '';
+                            ?>
+                            <input type="email" class="wt-modal__input wt-modal__input--email" id="wt-email" name="email" autocomplete="on" required value="<?php echo $email; ?>">
+                            <?php if ( $is_message ) : ?>
+                                <label for="wt-message" class="wt-modal__label wt-modal__label--message">Message</label>
+                                <textarea name="message" id="wt-message" cols="30" rows="10" class="wt-modal__input wt-modal__input--message"></textarea>
+                            <?php endif; ?>
+                        </div>
+                        <div class="wt-modal__submit">
+                            <button class="wt-button">
+                                <span class="water-testing__icon water-testing__icon--mail water-testing__icon--white"></span>
+                                <span class="water-testing__text"><?php echo $button; ?></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="wt-modal__loading"><div></div></div>
+                <div class="wt-modal__complete"><div>
+                        <div class="wt-modal__complete-text">The request was sent successfully.</div>
+                        <button class="wt-button wt-modal__close">
+                            <span class="water-testing__text">Close Form</span>
+                        </button></div></div>
+            </div>
+            <div class="wt-modal__bg wt-modal__close" title="Close Form"></div>
+        </div>
 		<?php
 		return ob_get_clean();
 	}
@@ -264,14 +316,24 @@ class THESPA_shortcodes {
 	 *
 	 * @param  THESPA_data $obj_data
 	 * @param  object $js_data
+	 * @param  string $postfix
 	 * @return string
 	 */
-	public static function getName( $obj_data, $js_data ) {
-		if ( $js_data->devises ) {
-			return "{$obj_data->get_device( $js_data->devises )['name']} — ";
+	public static function getName( $obj_data, $js_data, $postfix = ' — ' ) {
+        if ( is_object( $js_data ) ) {
+            $devises = $js_data->devises;
+            $type = $js_data->type;
+            $volume = $js_data->volume;
+        } else {
+	        $devises = $js_data['devises'];
+	        $type = $js_data['type'];
+	        $volume = $js_data['volume'];
         }
-		if ( $js_data->type AND $js_data->volume ) {
-			return "{$obj_data->get_volume( $js_data->type )['name']} - {$js_data->volume}L — ";
+		if ( $devises ) {
+			return "{$obj_data->get_device( $devises )['name']}$postfix";
+        }
+		if ( $type AND $volume ) {
+			return "{$obj_data->get_volume( $type )['name']} - {$volume}L$postfix";
         }
 
 		return '';

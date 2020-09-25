@@ -3,7 +3,7 @@
  * THESPA_data Class.
  *
  * @package THESPA_data\Classes
- * @version 1.0.8
+ * @version 1.0.11
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -109,44 +109,24 @@ class THESPA_data {
 				}
 			}
 		}
-
-//		$this->add_test_type_level();
 	}
 
 	/**
-	 * Fix $this->data. Add test_type level.
+	 * Data from data base into var $data.
 	 *
-	 * @return void
+	 * @param  string $type
+	 * @param  int $id
+	 * @return array
 	 */
-	private function add_test_type_level() {
-		for ( $i = 0; $i < count( $this->data ); $i++ ) {
-			$bromine = [
-				'id' => "1",
-				'name' => 'AquaChek Bromine Test Strips',
-				'data' => [],
-			];
-			$chlorine = [
-				'id' => "2",
-				'name' => 'AquaChek Chlorine Test Strips',
-				'data' => [],
-			];
-			for ( $j = 0; $j < count( $this->data[$i]['data'] ); $j++ ) {
-				$c = $this->data[$i]['data'][$j];
-				if ( $c['test_type'] == 'bromine' OR $c['test_type'] == 'all' ) {
-					array_push( $bromine['data'], $c );
-				}
-				if ( $c['test_type'] == 'chlorine' OR $c['test_type'] == 'all' ) {
-					array_push( $chlorine['data'], $c );
-				}
-			}
-			$this->data[$i]['data'] = [];
-			if ( count( $bromine['data'] ) ) {
-				array_push( $this->data[$i]['data'], $bromine );
-			}
-			if ( count( $chlorine['data'] ) ) {
-				array_push( $this->data[$i]['data'], $chlorine );
-			}
-		}
+	public static function get_data_by_type_and_id( $type, $id ) {
+		global $wpdb;
+
+		$type = esc_sql( $type );
+		return $wpdb->get_results(
+			$wpdb->prepare( "
+					SELECT * FROM `{$wpdb->prefix}spa_{$type}`
+					WHERE `id` = '%d'
+				", $id ), ARRAY_A );
 	}
 
 	/**
@@ -193,10 +173,13 @@ class THESPA_data {
 	public function get_save_by_id( $js_id ) {
 		global $wpdb;
 
+		$user_id = get_current_user_id();
+//		if ( !$user_id ) return [];
+
 		$r = $wpdb->get_results( $wpdb->prepare( "
 				SELECT `data` FROM `{$wpdb->prefix}spa_sessions`
 				WHERE `user_id` = '%d' AND `js_id` = '%s'
-			", get_current_user_id(), $js_id ), ARRAY_A );
+			", $user_id, $js_id ), ARRAY_A );
 
 		if ( !empty( $r ) AND $r[0]['data'] ) {
 			return json_decode( $r[0]['data'] );
@@ -231,6 +214,9 @@ class THESPA_data {
 	public function get_saves( $exception = '' ) {
 		global $wpdb;
 
+		$user_id = get_current_user_id();
+		if ( !$user_id ) return [];
+
 		$add = '';
 		if ( $exception ) {
 			$exception = esc_sql( $exception );
@@ -240,7 +226,7 @@ class THESPA_data {
 		return $wpdb->get_results( $wpdb->prepare( "
 				SELECT * FROM `{$wpdb->prefix}spa_sessions`
 				WHERE `user_id` = '%d' AND `is_remove` != '1' $add
-			", get_current_user_id() ), ARRAY_A );
+			", $user_id ), ARRAY_A );
 	}
 
 	/**

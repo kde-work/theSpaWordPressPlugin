@@ -3,7 +3,7 @@
  * Media management Class.
  *
  * @package THESPA_waterTesting\Classes
- * @version 1.0.8
+ * @version 1.0.11
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -26,6 +26,7 @@ class THESPA_Media {
 		wp_register_script( 'uuidv4', plugins_url( '/assets/js/uuidv4.min.js', THESPA_ASSETS_DIR ), null, THESPA_VERSION ); // id generator
 		wp_register_script( 'date-format', plugins_url( '/assets/js/date-format.js', THESPA_ASSETS_DIR ), null, THESPA_VERSION );
 		wp_register_script( 'thespashoppe-products', plugins_url( '/assets/js/thespashoppe-products.js', THESPA_ASSETS_DIR ), null, THESPA_VERSION );
+		wp_register_script( 'thespashoppe-modal', plugins_url( '/assets/js/thespashoppe-modal.js', THESPA_ASSETS_DIR ), null, THESPA_VERSION );
 	}
 
 	/**
@@ -40,6 +41,7 @@ class THESPA_Media {
 		wp_enqueue_script('date-format');
 		wp_enqueue_script('thespashoppe-template');
 		wp_enqueue_script('thespashoppe-water-testing');
+		wp_enqueue_script('thespashoppe-modal');
 		wp_enqueue_script('thespashoppe-actions');
 		wp_enqueue_script('thespashoppe-products');
 

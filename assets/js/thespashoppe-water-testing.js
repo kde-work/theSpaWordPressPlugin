@@ -203,6 +203,7 @@
                     this.data_map.chemical = $elem.val();
                     this.data_map.test = {};                                         
                 }
+                console.log('this.data_map.chemical', this.data_map.chemical);
                 this.create_radio('test', this.data_map.chemical);
                 break;
             case 'value' :
@@ -391,10 +392,10 @@
 
         for (let i = 0; i < arr.global_result.length; i++) {
             // Filter to Bromine and Chlorine
-            if (this.data_map.chemical*1 === 1 && arr.global_result[i].is_b*1 === 0) {
+            if (this.current_chemical_type() === 1 && arr.global_result[i].is_b*1 === 0) {
                 continue;
             }
-            if (this.data_map.chemical*1 === 2 && arr.global_result[i].is_c*1 === 0) {
+            if (this.current_chemical_type() === 2 && arr.global_result[i].is_c*1 === 0) {
                 continue;
             }
 
@@ -435,7 +436,7 @@
         $result_text.hide();
 
         products = this.get_products(data.products);
-        if (this.data_map.chemical*1 === 1) {
+        if (this.current_chemical_type() === 1) {
             extra_products = this.get_products(data.extra_products_b);
         } else {
             extra_products = this.get_products(data.extra_products_c);
@@ -492,6 +493,15 @@
             default:
                 return text;
         }
+    };
+
+    /**
+     * Return current chemical type.
+     *
+     * @return int
+     */
+    TheSpaShopPE.prototype.current_chemical_type = function() {
+        return this.get_list_by_id(this.data_map.chemical, this.get_array('chemical', null), true).type * 1;
     };
 
     /**
@@ -601,8 +611,9 @@
             // console.log('list_par', list_par);
             for (let i = 0; i < list_par.length; i++) {
                 let list_child = this.get_array('value', {'p' : list_par[i].id});
+
                 // console.log('list_child', list_child);
-                this.template.print_test_item(list_par[i], list_child, this.data_map.chemical);
+                this.template.print_test_item(list_par[i], list_child, this.current_chemical_type());
             }
         }
     };
@@ -636,11 +647,11 @@
         }
 
         // if singe option then select this
-        if (list.length === 1) {
-            $elem.trigger('change');
-        } else {
+        if (list.length !== 1 || this.is_change_data_map !== true) {
             $elem.val(null);
         }
+
+        $elem.trigger('change');
     };
 
     /**
@@ -723,7 +734,7 @@
     };
 
     /**
-     * Loader start.
+     * Loader stop.
      */
     TheSpaShopPE.prototype.loader_stop = function() {
         this.$body.removeClass('spa-loader');
